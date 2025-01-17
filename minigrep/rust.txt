@@ -1,0 +1,2 @@
+This file is used to test a command line tool built with Rust.
+javascript for the web, Rust for systems programming

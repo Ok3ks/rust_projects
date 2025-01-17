@@ -1,0 +1,3 @@
+https://docs.rs/bm25/latest/bm25/ 
+https://github.com/compenguy/ngrammatic
+https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/07-inference.ipynb
