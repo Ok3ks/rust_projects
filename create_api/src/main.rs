@@ -8,10 +8,17 @@ async fn health() -> HttpResponse {
 	}))
 }
 
+async fn trips() -> HttpResponse {
+	
+}
+
 #[actix_web::main]
 async fn main() -> Result<()> {
 	HttpServer::new(|| {
-		App::new().route("/health", web::get().to(health))
+		App::new()
+		.route("/health", web::get().to(health))
+		.route("/trips", web::get().to(trips))
+
 	})
 	.bind(("0.0.0.0", 4122))?
 	.run()
