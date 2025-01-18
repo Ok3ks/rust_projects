@@ -1,7 +1,10 @@
 use actix_web::{App, HttpServer, HttpResponse, web};
-use std::io::{Result};
-use create_api::backend::data:: {get_fake_trips};
+use create_api::backend::data:: {get_fake_trips, get_trips};
 use serde::Deserialize;
+use log::{ error};
+use std::io::{Result};
+// use std::env;
+// use env_logger::Env;
 
 
 #[derive(Deserialize)]
@@ -17,15 +20,29 @@ async fn health() -> HttpResponse {
 	}))
 }
 
+// Get Trips - fake data
 async fn trips(query: web::Query<TripsQuery>) -> HttpResponse {
-	match get_fake_trips(query.from_ms, query.n_results).await {
+	match get_trips(query.from_ms, query.n_results).await {
 		Ok(trips) => HttpResponse::Ok().json(trips),
 		Err(e) => HttpResponse::InternalServerError().body(e.to_string())
 	}
 }
 
+//Get Trips from parquet file 
+
+
 #[actix_web::main]
 async fn main() -> Result<()> {
+
+	// Initialize the logger
+	// env_logger::init_from_env(Env::new().default_filter_or("info"))
+	// let port = env::var("PORT")
+	// 	.unwrap_or_else(|_| "8080".to_string())
+	// 	.parse::<u16>()
+	// 	.expect("PORT must be a valid number");
+
+	// info!("Starting server on port {}", port)
+
 	HttpServer::new(|| {
 		App::new()
 		.wrap(actix_web::middleware::Logger::default())
