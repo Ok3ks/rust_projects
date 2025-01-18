@@ -1,3 +1,21 @@
 https://docs.rs/bm25/latest/bm25/ 
 https://github.com/compenguy/ngrammatic
 https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/07-inference.ipynb
+
+
+Ideas with Rust include: creating a search api by combining minigrep functionality
+and api with actix web.
+
+Using Polars with Rust for extreme speed
+
+Rust with security
+
+Projects:
+
+- Create API
+
+- Minigrep
+
+- Rebuild FPL backend in Django with Rust(Rust with Postgres)
+
+Github API which transforms PRs into Epics
