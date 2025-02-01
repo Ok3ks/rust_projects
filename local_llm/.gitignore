@@ -1,0 +1,6 @@
+.venv
+.env
+.DS_Store
+/local_llm/.DS_Store
+logs/
+__pycache__/

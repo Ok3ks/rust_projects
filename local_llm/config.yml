@@ -1,0 +1,2 @@
+llm_provider: ollama
+llm_model: deepseek-r1:8b
