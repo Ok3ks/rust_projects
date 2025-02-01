@@ -65,7 +65,7 @@ class OllamaLLM(LLM):
         
         super().__init__()
         self.model_name = model_name
-        self.download_model_if_necessary(model_name)
+        self._download_model_if_necessary(model_name)
         self.client = Client()
 
     def _download_model_if_necessary(self, model_name:str):
@@ -108,3 +108,20 @@ class OllamaLLM(LLM):
         })
 
         return response, self.messages
+    
+class LLMFactory:
+    """
+    Factory class for creating LLMs.
+    """
+
+    @staticmethod
+    def create_llm(
+        llm_provider: LLMProviderType,
+        llm_model: str | None = None,
+    ) -> LLM:
+        if llm_provider == LLMProviderType.OLLAMA:
+            return OllamaLLM(llm_model)
+        elif llm_provider == LLMProviderType.DUMMY:
+            return DummyLLM()
+        else:
+            raise ValueError(f'Invalid LLM provider: {llm_provider}')

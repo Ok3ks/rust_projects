@@ -5,9 +5,9 @@ import typer
 from dotenv import find_dotenv, load_dotenv
 from loguru import logger
 
-from coding_assistant.agents import AgentFactory, AgentType
-from coding_assistant.llms import LLMProviderType
-from coding_assistant.repo import Repo
+from src.coding_assistant.agents import AgentFactory, AgentType
+from src.coding_assistant.llms import LLMProviderType
+from src.coding_assistant.repo import Repo
 
 load_dotenv(find_dotenv())
 
