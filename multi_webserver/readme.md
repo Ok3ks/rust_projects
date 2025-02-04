@@ -10,3 +10,23 @@ headers CRLF
 message-body
 
 CRLF = carriage return and line feed (\r\n)
+
+
+### Improving thoroughput of a webserver
+
+- Spawning threads with a threadpool
+- Fork/Join model
+- Single-threaded async I/O model
+- Multi-threaded async I/O model
+
+When trying to design code, writing the client interface first can help guide design. Write API of the code, so it's structured in the way we want to call it, then implement the functionality, rather than implementing the functionality and designing the public API.
+
+<!-- Using Compiler driven development in Rust. -->
+Write the code for the function, then use compiler to correct
+
+
+In communication between threads as in a threadpool, channels is used in Rust, which is multiple producers, one consumer. Channels functions as the queue of jobs.
+
+In the case of a multithreaded application, this means the threadpool holds the sender, while each worker holds the receiver.
+
+Caveat here is receiver from `std::mpsc` is a single while there are multiple workers, with no copy trait implemented, cloning the receiver can lead to tasks being processed multiple times. In this case we use a mutex to ensure a task is processed only once while we use Arc to make multiple copies of the receiver
