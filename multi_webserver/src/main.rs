@@ -2,6 +2,7 @@ use std::{
     fs,
     io::{prelude::*, BufReader},
     net::{TcpListener, TcpStream},
+    thread,
 };
 
 use multi_webserver::ThreadPool;
@@ -13,7 +14,7 @@ fn main() {
     //Stream corresponds to an open connection between the client and the server
     //for a full request and response process
 
-    for stream in listener.incoming() {
+    for stream in listener.incoming().take(3) {
         let stream = stream.unwrap();
 
         pool.execute(|| {
