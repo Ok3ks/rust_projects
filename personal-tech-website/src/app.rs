@@ -1,6 +1,7 @@
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
+stylance::import_crate_style!(my_style, "style/main.scss");
 
 #[component]
 pub fn App() -> impl IntoView {
