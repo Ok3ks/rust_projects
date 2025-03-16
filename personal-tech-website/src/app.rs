@@ -38,81 +38,81 @@ enum Theme {
     Dark
 }
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = localStorage)]
-    fn getItem(key: &str) -> Option<String>;
+// #[wasm_bindgen]
+// extern "C" {
+//     #[wasm_bindgen(js_namespace = localStorage)]
+//     fn getItem(key: &str) -> Option<String>;
     
-    #[wasm_bindgen(js_namespace = localStorage)]
-    fn setItem(key: &str, value: &str);
+//     #[wasm_bindgen(js_namespace = localStorage)]
+//     fn setItem(key: &str, value: &str);
     
-    #[wasm_bindgen(js_namespace = document)]
-    fn querySelector(selector: &str) -> JsValue;
+//     #[wasm_bindgen(js_namespace = document)]
+//     fn querySelector(selector: &str) -> JsValue;
     
-    #[wasm_bindgen(js_name = "document.documentElement.classList.add")]
-    fn add_class_to_html(class: &str);
+//     #[wasm_bindgen(js_name = "document.documentElement.classList.add")]
+//     fn add_class_to_html(class: &str);
     
-    #[wasm_bindgen(js_name = "document.documentElement.classList.remove")]
-    fn remove_class_from_html(class: &str);
-}
+//     #[wasm_bindgen(js_name = "document.documentElement.classList.remove")]
+//     fn remove_class_from_html(class: &str);
+// }
 
-#[component]
-pub fn ThemeToggle() -> impl IntoView {
-    // Initialize theme from localStorage or default to light
-    let initial_theme = match getItem("theme").as_deref() {
-        Some("dark") => Theme::Dark,
-        _ => Theme::Light,
-    };
+// #[component]
+// pub fn ThemeToggle() -> impl IntoView {
+//     // Initialize theme from localStorage or default to light
+//     let initial_theme = match getItem("theme").as_deref() {
+//         Some("dark") => Theme::Dark,
+//         _ => Theme::Light,
+//     };
     
-    // Create a signal to track theme state
-    let (theme, set_theme) = create_signal(initial_theme);
+//     // Create a signal to track theme state
+//     let (theme, set_theme) = create_signal(initial_theme);
     
-    // Apply initial theme to document
-    if theme() == Theme::Dark {
-        add_class_to_html("night-mode");
-    } else {
-        remove_class_from_html("night-mode");
-    }
+//     // Apply initial theme to document
+//     if theme() == Theme::Dark {
+//         add_class_to_html("night-mode");
+//     } else {
+//         remove_class_from_html("night-mode");
+//     }
     
-    // Toggle the theme
-    let toggle_theme = move |_| {
-        set_theme.update(|current_theme| {
-            match current_theme {
-                Theme::Light => {
-                    setItem("theme", "dark");
-                    add_class_to_html("night-mode");
-                    *current_theme = Theme::Dark;
-                },
-                Theme::Dark => {
-                    setItem("theme", "light");
-                    remove_class_from_html("night-mode");
-                    *current_theme = Theme::Light;
-                }
-            }
-        });
-    };
+//     // Toggle the theme
+//     let toggle_theme = move |_| {
+//         set_theme.update(|current_theme| {
+//             match current_theme {
+//                 Theme::Light => {
+//                     setItem("theme", "dark");
+//                     add_class_to_html("night-mode");
+//                     *current_theme = Theme::Dark;
+//                 },
+//                 Theme::Dark => {
+//                     setItem("theme", "light");
+//                     remove_class_from_html("night-mode");
+//                     *current_theme = Theme::Light;
+//                 }
+//             }
+//         });
+//     };
     
-    view! {
-        <button
-            class="theme-toggle"
-            aria-label="Toggle dark/light mode"
-            on:click=toggle_theme
-        >
-            <div class=move || {
-                let base = "toggle-track";
-                if theme() == Theme::Dark {
-                    format!("{} dark-active", base)
-                } else {
-                    base.to_string()
-                }
-            }>
-                <span class="sun-icon">"☀️"</span>
-                <span class="moon-icon">"🌙"</span>
-                <div class="toggle-thumb"></div>
-            </div>
-        </button>
-    }
-}
+//     view! {
+//         <button
+//             class="theme-toggle"
+//             aria-label="Toggle dark/light mode"
+//             on:click=toggle_theme
+//         >
+//             <div class=move || {
+//                 let base = "toggle-track";
+//                 if theme() == Theme::Dark {
+//                     format!("{} dark-active", base)
+//                 } else {
+//                     base.to_string()
+//                 }
+//             }>
+//                 <span class="sun-icon">"☀️"</span>
+//                 <span class="moon-icon">"🌙"</span>
+//                 <div class="toggle-thumb"></div>
+//             </div>
+//         </button>
+//     }
+// }
 
 /// Renders the home page of your application.
 #[component]
@@ -122,12 +122,12 @@ fn HomePage() -> impl IntoView {
 
     view! {
         
-        <nav>
-        <div>
-        <ThemeToggle/>
-        </div>
-        </nav>
-        //// class:"bg-navy"move || night_mode.get() = true
+        // <nav>
+        // <div>
+        // <ThemeToggle/>
+        // </div>
+        // </nav>
+
         <header class="bg-navy">
         <div class="container" style="padding: 4rem 1rem;">
             <h1 style="color: var(--cream); border-color: var(--green);">"Emmanuel Okedele"</h1>
