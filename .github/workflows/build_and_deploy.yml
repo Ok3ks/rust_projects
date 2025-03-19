@@ -29,9 +29,12 @@ jobs:
         name: 🔑 Google Cloud Auth
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Navigate to respective directory
+        run: cd personal-tech-website 
           
       - name: 🐋 Build Docker image
-        run: cd personal-tech-website && docker build -t ${{ env.IMAGE_NAME }}:latest .
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: 🐋 Configure Docker for pushing
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
