@@ -24,8 +24,6 @@ jobs:
     steps:
       - uses: 'actions/checkout@v3'
         name: 🔽 Checkout
-        with:
-          path: personal-tech-website
       
       - uses: 'google-github-actions/auth@v1'
         name: 🔑 Google Cloud Auth
@@ -33,7 +31,9 @@ jobs:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
           
       - name: 🐋 Build Docker image
-        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+        run: |
+          cd personal-tech-website
+          docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: 🐋 Configure Docker for pushing
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
