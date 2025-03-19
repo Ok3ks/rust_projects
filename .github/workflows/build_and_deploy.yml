@@ -1,0 +1,43 @@
+# Builds the Docker image and then deploys it to Google Cloud's Artifact Registry
+name: 🛠️ Build & Deploy
+
+on:
+  push:
+    branches: ["main"]
+    paths: "personal-tech-website/"
+
+  pull_request:
+    branches: ["main"]
+
+env: 
+  IMAGE_NAME: 'personal-tech-website'
+  REGION: europe-west2
+  PROJECT_NAME: personal-tech-website
+  REPOSITORY: Wasm-images
+
+jobs:
+
+  deploy:
+    name: 🛠️ Build & Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v3'
+        name: 🔽 Checkout
+      
+      - uses: 'google-github-actions/auth@v1'
+        name: 🔑 Google Cloud Auth
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: 🐋 Build Docker image
+        run: docker build -t ${{ env.IMAGE_NAME }}:latest .
+
+      - name: 🐋 Configure Docker for pushing
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      # This deploys under 2 tags. One is `latest` and the other one is the last commit's SHA
+      - name: ☁️ Deploy to GCP Artifact Registry
+        run: |-
+          docker tag ${{ env.IMAGE_NAME }}:latest ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_NAME }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_NAME }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_NAME }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
