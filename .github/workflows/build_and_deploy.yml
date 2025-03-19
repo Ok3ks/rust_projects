@@ -2,6 +2,7 @@
 name: 🛠️ Build & Deploy
 
 on:
+  workflow_dispatch:
   push:
     branches: ["main"]
     paths: "personal-tech-website/"
