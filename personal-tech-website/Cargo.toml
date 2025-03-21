@@ -31,6 +31,10 @@ ssr = [
   "leptos_router/ssr",
 ]
 
+[build]
+target = "x86_64-unknown-linux-gnu" # or whatever
+
+
 # Defines a size-optimized profile for the WASM bundle in release mode
 [profile.wasm-release]
 inherits = "release"
@@ -81,6 +85,9 @@ bin-default-features = false
 #
 # Optional. Can be over-ridden with the command line parameter --lib-features
 lib-features = ["hydrate"]
+
+# bin-target = "x64_linux"
+bin-target-triple = "x86_64-unknown-linux-gnu"
 
 # If the --no-default-features flag should be used when compiling the lib target
 #
