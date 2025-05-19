@@ -12,6 +12,25 @@ fn get_lyrics(url: String) -> String {
     selections
 }
 
+fn get_songs(album_url: String) -> HashSet<String> {
+
+    let response = reqwest::blocking::get(&album_url);
+    let response = response.unwrap().text().unwrap();
+    let document = scraper::Html::parse_document(&response);
+
+    let mut links = Vec::<String>::new();
+    let lyrics_selector = scraper::Selector::parse("a").unwrap();
+
+    for element in document.select(&lyrics_selector) {
+        if let Some(link) = element.value().attr("href") {
+            links.push(String::from(link));
+        }
+    }
+
+    let _song_links = links.into_iter().filter(|x| x.starts_with("/lyrics/")).collect::<HashSet<_>>();
+    _song_links
+}
+
 fn get_albums(url: String) -> HashSet<String> {
 
     let response = reqwest::blocking::get(&url);
@@ -32,27 +51,22 @@ fn get_albums(url: String) -> HashSet<String> {
 
 }
 
-// fn extract_songs from albums
-// fn extract_lyrics for each song
-
 fn main() {
 
-    //Parameterize to ensure this scraping process can be parallelized
-
-    let _albums = String::from("https://www.musixmatch.com/artist/Kendrick-Lamar/albums");
-
-    let _base_url = "https://www.musixmatch.com/lyrics/";
-    let music_title = String::from("https://www.musixmatch.com/lyrics/Kendrick-Lamar/luther");
-
-    //modularise this into a function
+    let _base_url = String::from("https://www.musixmatch.com/");
     let albums = get_albums(_albums.clone());
     let mut count = 0;
+
     for element in albums {
+
         println!("{}{}", count, element);
+
+        for song in get_songs(_base_url.clone() + &element.clone()){
+            let _lyric = get_lyrics(_base_url.clone() + &song.clone());
+            println!("{}", _lyric);
+        }
         count += 1;
+        break
     }
 
-    // let selections = get_lyrics(music_title.clone());
-    // let lyric = Lyrics {title: music_title, lyrics: selections};
-    // println!("{}", lyric);
 }
