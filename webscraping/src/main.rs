@@ -1,56 +1,58 @@
+use webscraping::Lyrics;
+use std::collections::*;
 
-use serde::{Serialize, Deserialize};
-use std::fmt::Display;
-use serde_json::Result;
-
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Lyrics {
-    title: String,
-    lyrics: String,
-    //genre?
-}
-
-impl Display for Lyrics {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}{}", self.title, self.lyrics)
-    }
-}
-
-pub fn search<'a>(query: String, contents: String) -> Vec<String> {
-    let mut results = Vec::<String>::new();
-    let query = query.to_lowercase();
-
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            results.push(line.to_string());
-        }
-    }
-    results
-}
-
-
-fn main() -> {
-
-    //Parameterize to ensure this scraping process can be parallelized
-
-    let _base_url = "https://www.musixmatch.com/lyrics/";
-    let music_title = String::from("https://www.musixmatch.com/lyrics/Kendrick-Lamar/luther");
-
-    let response = reqwest::blocking::get(&music_title);
+fn get_lyrics(url: String) -> String {
+    let response = reqwest::blocking::get(&url);
     let response = response.unwrap().text().unwrap();
     let document = scraper::Html::parse_document(&response);
     
     let lyrics_selector = scraper::Selector::parse("div").unwrap();
     let selections = document.select(&lyrics_selector).next().unwrap().text().map(|s| s.to_string()).collect::<Vec<_>>().join("\n");
 
-    let lyric = Lyrics {title: music_title, lyrics: selections};
-    // let j = serde_json::to_string(&lyric);
+    selections
+}
 
-    // Print, write to a file, or send to an HTTP server.
-    // println!("{}", j);
+fn get_albums(url: String) -> HashSet<String> {
 
-    println!("{}", lyric);
-    //write to file 
+    let response = reqwest::blocking::get(&url);
+    let response = response.unwrap().text().unwrap();
+    let document = scraper::Html::parse_document(&response);
 
+    let mut links = Vec::<String>::new();
+    let lyrics_selector = scraper::Selector::parse("a").unwrap();
+
+    for element in document.select(&lyrics_selector) {
+        if let Some(link) = element.value().attr("href") {
+            links.push(String::from(link));
+        }
+    }
+
+    let _album_links = links.into_iter().filter(|x| x.starts_with("/album/")).collect::<HashSet<_>>();
+    _album_links
+
+}
+
+// fn extract_songs from albums
+// fn extract_lyrics for each song
+
+fn main() {
+
+    //Parameterize to ensure this scraping process can be parallelized
+
+    let _albums = String::from("https://www.musixmatch.com/artist/Kendrick-Lamar/albums");
+
+    let _base_url = "https://www.musixmatch.com/lyrics/";
+    let music_title = String::from("https://www.musixmatch.com/lyrics/Kendrick-Lamar/luther");
+
+    //modularise this into a function
+    let albums = get_albums(_albums.clone());
+    let mut count = 0;
+    for element in albums {
+        println!("{}{}", count, element);
+        count += 1;
+    }
+
+    // let selections = get_lyrics(music_title.clone());
+    // let lyric = Lyrics {title: music_title, lyrics: selections};
+    // println!("{}", lyric);
 }
