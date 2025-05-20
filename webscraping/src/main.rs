@@ -71,13 +71,9 @@ fn main() {
     
     for element in albums {
 
-        // println!("{}{}", count, element);
-        let songs = get_songs(_base_url.clone() + &element.clone());
-
-        for song in songs {
-            println!("{}", song);
-
-            let _lyric = get_lyrics(_base_url.clone() + &song.clone());
+        for song in get_songs(_base_url.clone() + &element.clone().trim_start_matches('/')) {
+            
+            let _lyric = get_lyrics(_base_url.clone() + &song.clone().trim_start_matches('/'));
             println!("{}{}", count, _lyric);
 
             count += 1;
