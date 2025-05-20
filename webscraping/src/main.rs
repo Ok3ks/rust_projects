@@ -1,5 +1,6 @@
-use webscraping::Lyrics;
+use webscraping::{ Lyrics, Args };
 use std::collections::*;
+use clap::Parser;
 
 fn get_lyrics(url: String) -> String {
     let response = reqwest::blocking::get(&url);
@@ -23,6 +24,7 @@ fn get_songs(album_url: String) -> HashSet<String> {
 
     for element in document.select(&lyrics_selector) {
         if let Some(link) = element.value().attr("href") {
+            println!("{}", link);
             links.push(String::from(link));
         }
     }
@@ -51,22 +53,41 @@ fn get_albums(url: String) -> HashSet<String> {
 
 }
 
+fn get_artist_name() -> String {
+
+    let args = Args::parse();
+    let _album_base_url = format!("https://www.musixmatch.com/artist/{0}/albums", {args.artist}).to_string();
+    
+    _album_base_url
+}
+
 fn main() {
 
     let _base_url = String::from("https://www.musixmatch.com/");
-    let albums = get_albums(_albums.clone());
-    let mut count = 0;
+    let _artist = get_artist_name();
 
+    let albums = get_albums(_artist.clone());
+    let mut count = 0;
+    
     for element in albums {
 
-        println!("{}{}", count, element);
+        // println!("{}{}", count, element);
+        let songs = get_songs(_base_url.clone() + &element.clone());
 
-        for song in get_songs(_base_url.clone() + &element.clone()){
+        for song in songs {
+            println!("{}", song);
+
             let _lyric = get_lyrics(_base_url.clone() + &song.clone());
-            println!("{}", _lyric);
+            println!("{}{}", count, _lyric);
+
+            count += 1;
         }
-        count += 1;
         break
+
     }
 
 }
+
+
+//Hyphenify consumer input i.e artist name
+//Extract exact song lyrics

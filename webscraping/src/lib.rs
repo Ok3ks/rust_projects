@@ -1,11 +1,20 @@
 use serde::{Serialize, Deserialize};
 use std::fmt::Display;
+use clap::Parser;
 
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Lyrics {
+    pub artist: String,
     pub title: String,
     pub lyrics: String,
+}
+
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+pub struct Args {
+    #[arg(short, long)]
+    pub artist: String,
 }
 
 impl Display for Lyrics {
