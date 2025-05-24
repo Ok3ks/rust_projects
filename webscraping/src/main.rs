@@ -67,13 +67,16 @@ mod tests {
      #[test]
      fn test_func_get_lyrics() {
 
-        let album_url = String::from("https://www.musixmatch.com/ \n
-                                artist/Taylor-Swift/album/Taylor-Swift/Taylor-Swift-Big-Machine-Radio-Release-Special/ \n
-                                lyrics/Taylor-Swift/champagne-problems");
+        let album_url = String::from("https://www.musixmatch.com/lyrics/Taylor-Swift/champagne-problems");
         let songs = get_lyrics(album_url);
         
         ////Get Lyrics
-        assert_eq!("/lyric/", "/lyric/");
+        assert_eq!(songs.lyrics_section.contains("Lyrics"), true);
+        assert_eq!(songs.other_section.contains("Mood"), true);
+        assert_eq!(songs.other_section.contains("Rating"), true);
+        assert_eq!(songs.other_section.contains("Meaning"), true);
+
+
      }
     }
 
@@ -150,6 +153,8 @@ fn main() {
 
 //Hyphenify consumer input i.e artist name
 //Extract exact song lyrics
+//Write to File
+//Build RAG on top? in Rust or in python? --use ahnlich?
 
 //tests
 //frontend (leptos or react)
