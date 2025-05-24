@@ -1,8 +1,11 @@
 use webscraping::{ Lyrics, Args };
 use std::collections::*;
-use clap::Parser;
+use clap::{builder::Str, Parser};
 
-fn get_lyrics(url: String) -> String {
+pub fn get_lyrics(url: String) -> String {
+    _get_lyrics_internal(url)
+}
+fn _get_lyrics_internal(url: String) -> String {
     let response = reqwest::blocking::get(&url);
     let response = response.unwrap().text().unwrap();
     let document = scraper::Html::parse_document(&response);
@@ -10,8 +13,62 @@ fn get_lyrics(url: String) -> String {
     let lyrics_selector = scraper::Selector::parse("div").unwrap();
     let selections = document.select(&lyrics_selector).next().unwrap().text().map(|s| s.to_string()).collect::<Vec<_>>().join("\n");
 
-    selections
+    // selections
+    // url
+
+    let mut start_index = 0;
+    let mut end_index: i32 = 0;
+
+    let mut start_index = &selections.lines().position(|x: &str| x.starts_with("Lyrics"));
+    // for lines in selections.lines() {
+    //     // println!("{}, {}", start_index, i);
+    //     if lines.starts_with("Lyrics")
+    // }
+
+    //97 //201
+
+    println!(start_index);
+    url
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_func_get_albums() {
+
+       let artist_url = String::from("https://www.musixmatch.com/artist/Kendrick-Lamar/albums");
+       let albums = get_albums(artist_url);
+
+       for i in (albums) {
+        assert_eq!(i.starts_with("/album/"), true);
+       }
+    }
+
+    #[test]
+    fn test_func_get_songs() {
+
+        let album_url = String::from("https://www.musixmatch.com/artist/Taylor-Swift/album/Taylor-Swift/Taylor-Swift-Big-Machine-Radio-Release-Special");
+        let songs = get_songs(album_url);
+ 
+        for i in (songs) {
+         assert_eq!(i.starts_with("/lyrics/"), true);
+        }
+     }
+
+     #[test]
+     fn test_func_get_lyrics() {
+
+        let album_url = String::from("https://www.musixmatch.com/ \n
+                                artist/Taylor-Swift/album/Taylor-Swift/Taylor-Swift-Big-Machine-Radio-Release-Special/ \n
+                                lyrics/Taylor-Swift/champagne-problems");
+        let songs = get_lyrics(album_url);
+        
+        ////Get Lyrics
+        assert_eq!("/lyric/", "/lyric/");
+     }
+    }
 
 fn get_songs(album_url: String) -> HashSet<String> {
 
