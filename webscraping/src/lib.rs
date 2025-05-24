@@ -5,9 +5,9 @@ use clap::Parser;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Lyrics {
-    pub artist: String,
-    pub title: String,
-    pub lyrics: String,
+    pub url: String,
+    pub lyrics_section: String,
+    pub other_section: String
 }
 
 #[derive(Parser, Debug)]
@@ -19,7 +19,7 @@ pub struct Args {
 
 impl Display for Lyrics {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}{}", self.title, self.lyrics)
+        write!(f, "{}{}", self.lyrics_section, self.other_section)
     }
 }
 
