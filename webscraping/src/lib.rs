@@ -1,13 +1,36 @@
-use serde::{Serialize, Deserialize};
-use std::fmt::Display;
 use clap::Parser;
-
+use serde::{Deserialize, Serialize};
+use std::fmt::Display;
+use std::fs;
+use std::path::Path;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Lyrics {
-    pub url: String,
+    pub artist: String,
+    pub title: String,
     pub lyrics_section: String,
-    pub other_section: String
+    pub other_section: String,
+}
+
+impl Lyrics {
+    fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
+
+    pub fn save<P: AsRef<Path>>(&self, path: P) {
+        let file_path = path.as_ref().to_path_buf();
+
+        if let Some(parent) = file_path.parent() {
+            fs::create_dir_all(parent).unwrap();
+        }
+        fs::write(path, self.to_json()).unwrap();
+    }
+}
+
+impl Display for Lyrics {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}{}", self.lyrics_section, self.other_section)
+    }
 }
 
 #[derive(Parser, Debug)]
@@ -15,12 +38,6 @@ pub struct Lyrics {
 pub struct Args {
     #[arg(short, long)]
     pub artist: String,
-}
-
-impl Display for Lyrics {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}{}", self.lyrics_section, self.other_section)
-    }
 }
 
 pub fn search<'a>(query: String, contents: String) -> Vec<String> {
