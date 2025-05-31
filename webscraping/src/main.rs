@@ -191,6 +191,8 @@ fn main() {
     }
 }
 
+//add rayon now!
+
 // slam into database?
 
 //Hyphenify consumer input i.e artist name
@@ -200,6 +202,7 @@ fn main() {
 //Build RAG on top? in Rust or in python? --use ahnlich?
 
 //tests
+
 //frontend (leptos or react)
 
 //understand owned and borrowed references
