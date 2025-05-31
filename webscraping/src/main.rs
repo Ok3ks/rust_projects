@@ -2,6 +2,8 @@ use clap::{builder::Str, Parser};
 use std::collections::*;
 use std::path::Path;
 use webscraping::{Args, Lyrics};
+use std::thread;
+use std::time::Duration;
 
 pub fn get_lyrics(url: String) -> Lyrics {
     _get_lyrics_internal(url)
@@ -185,6 +187,7 @@ fn main() {
                 format!("../lyrics/{0}/{1}", { &lyric.artist }, { &lyric.title }).as_str(),
             ));
         }
+        thread::sleep(Duration::from_millis(10000));
     }
 }
 
