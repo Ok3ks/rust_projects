@@ -1,9 +1,9 @@
 use clap::{builder::Str, Parser};
 use std::collections::*;
 use std::path::Path;
-use webscraping::{Args, Lyrics};
 use std::thread;
 use std::time::Duration;
+use webscraping::{Args, Lyrics};
 
 pub fn get_lyrics(url: String) -> Lyrics {
     _get_lyrics_internal(url)
