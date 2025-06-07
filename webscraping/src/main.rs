@@ -1,9 +1,9 @@
-use clap::{builder::Str, Parser};
+use clap::Parser;
 use std::collections::*;
 use std::path::Path;
 use std::thread;
 use std::time::Duration;
-use webscraping::{Args, Lyrics};
+use webscraping::{Cli, Lyrics};
 
 pub fn get_lyrics(url: String) -> Lyrics {
     _get_lyrics_internal(url)
@@ -161,20 +161,27 @@ fn get_albums(url: String) -> HashSet<String> {
     _album_links
 }
 
-fn get_artist_name() -> String {
-    let args = Args::parse();
-    let _album_base_url: String = format!("https://www.musixmatch.com/artist/{0}/albums", {
-        args.artist
-    })
-    .to_string();
-    _album_base_url
+fn get_artist_name() -> Vec<String> {
+    let args = Cli::parse();
+    let mut _albums = Vec::new();
+
+    for i in args.artist {
+        let _album_base_url: String =
+            format!("https://www.musixmatch.com/artist/{0}/albums", { i }).to_string();
+        _albums.push(_album_base_url);
+    }
+
+    _albums
 }
 
-fn main() {
-    let _base_url = String::from("https://www.musixmatch.com/");
-    let _album_url = get_artist_name();
+pub fn single_artist_scrap(artist: String) {
+    _single_artist_scrap(artist);
+}
 
-    let albums = get_albums(_album_url.clone());
+fn _single_artist_scrap(artist: String) {
+    let _base_url = String::from("https://www.musixmatch.com/");
+
+    let albums = get_albums(artist);
     let mut count = 0;
 
     for element in albums {
@@ -186,18 +193,27 @@ fn main() {
             lyric.save(Path::new(
                 format!("../lyrics/{0}/{1}", { &lyric.artist }, { &lyric.title }).as_str(),
             ));
+            break;
         }
         thread::sleep(Duration::from_millis(10000));
     }
 }
 
-//add rayon now!
+fn main() {
+    let _album_url = get_artist_name();
+
+    for i in _album_url {
+        _single_artist_scrap(i);
+    }
+}
+
+// add rayon now
 
 // slam into database?
 
-//Hyphenify consumer input i.e artist name
+// Hyphenify consumer input i.e artist name
 
-//Extract exact song lyrics
+// Extract exact song lyrics
 
 //Build RAG on top? in Rust or in python? --use ahnlich?
 

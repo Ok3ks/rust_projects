@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{ArgAction, Parser};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 use std::fs;
@@ -34,10 +34,10 @@ impl Display for Lyrics {
 }
 
 #[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-pub struct Args {
-    #[arg(short, long)]
-    pub artist: String,
+#[command(version, about = "artist", long_about = None, action = "append")]
+pub struct Cli {
+    #[arg(short, long, action = ArgAction::Append)]
+    pub artist: Vec<String>,
 }
 
 pub fn search<'a>(query: String, contents: String) -> Vec<String> {
