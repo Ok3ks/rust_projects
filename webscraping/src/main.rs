@@ -4,6 +4,7 @@ use std::path::Path;
 use std::thread;
 use std::time::Duration;
 use webscraping::{Cli, Lyrics};
+use rayon::prelude::*;
 
 pub fn get_lyrics(url: String) -> Lyrics {
     _get_lyrics_internal(url)
@@ -200,11 +201,10 @@ fn _single_artist_scrap(artist: String) {
 }
 
 fn main() {
-    let _album_url = get_artist_name();
 
-    for i in _album_url {
-        _single_artist_scrap(i);
-    }
+    let _album_url = get_artist_name();
+    _album_url.into_par_iter().for_each(|x| _single_artist_scrap(x.to_string()));
+
 }
 
 // add rayon now
