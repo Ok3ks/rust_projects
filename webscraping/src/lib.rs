@@ -4,6 +4,19 @@ use std::fmt::Display;
 use std::fs;
 use std::path::Path;
 
+const SPOTIFY_SEARCH: &'static str = "https://api.spotify.com/v1/search";
+
+enum SSearchType {
+
+    Artist(String),
+    Album(String), 
+    Playlist(String), 
+    Track(String), 
+    Show(String), 
+    Episode(String), 
+    Audiobook(String)
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Lyrics {
     pub artist: String,
