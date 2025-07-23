@@ -1,4 +1,5 @@
-use clap::Parser;
+use clap::{builder::Str, Parser};
+use reqwest::header::AUTHORIZATION;
 use std::collections::*;
 use std::path::Path;
 use std::thread;
@@ -200,6 +201,24 @@ fn _single_artist_scrap(artist: String) {
     }
 }
 
+pub fn spotify_search(url: &'static str, bearerToken: &'static str) -> String {
+
+    let params = HashMap::from(
+        [
+            ("type", "playlist"), 
+            ("next", "5"),
+            ("limit", "15")
+        ]);
+
+    /// Insert limits and next in order to track multipage responses
+
+    let response = reqwest::blocking::Client::new().get(url).header(AUTHORIZATION, bearerToken).send();
+    println!(response);
+    let response = response.unwrap().text().unwrap();
+    response
+
+}
+
 fn main() {
 
     let _album_url = get_artist_name();
@@ -224,3 +243,11 @@ fn main() {
 //understand owned and borrowed references
 
 //unwrap_or_else, match , if let
+
+
+//connect API to spotify lyrics, search button. to sift music
+
+// Breadth first search with playlists perhaps to find similar songs? or use theme? 
+// Data quality issue perhaps, find a way to classify song themes
+
+// Insert Analytics into app builds
