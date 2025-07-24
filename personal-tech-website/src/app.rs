@@ -1,26 +1,18 @@
 use leptos::*;
 use leptos_meta::*;
-use chrono::{DateTime, Utc};
-use chrono::prelude::*;
-use leptos::prelude::*;
-use wasm_bindgen::prelude::*;
+use chrono::{Utc};
 use leptos_router::*;
-stylance::import_crate_style!(my_style, "style/main.scss");
-// use rand:: {Rng, rng};
 
 
 #[component]
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
-    fn use_style() {
-        println!("{}", my_style::btn);
-    }
 
     view! {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
-        <Stylesheet id="leptos" href="/pkg/personal-tech-website.css"/>
+        <Stylesheet id="leptos" href="/pkg/leptos_start.css"/>
 
         // sets the document title
         <Title text="Welcome to Leptos"/>
@@ -33,6 +25,7 @@ pub fn App() -> impl IntoView {
                     <Route path="/template" view=Template/>
                     <Route path="/dynamic" view=DynamicTemplate/>
                     <Route path="/*any" view=NotFound/>
+                    <Route path="/write" view=Write/>
                 </Routes>
             </main>
         </Router>
@@ -280,6 +273,71 @@ fn DynamicTemplate() -> impl IntoView {
 
                     </div>
 
+
+}}
+
+#[component]
+fn Write() -> impl IntoView {
+    view! {
+    <header class="writing-form" style="padding: 2rem 0;"></header>
+                <div class="action-bar">
+                <button type="button" class="btn-draft">Save Draft</button>
+                <button type="submit" class="btn-primary">Publish</button>
+            </div>
+    <form class="writing-form" action="#" method="post">
+            <textarea 
+                class="title-input" 
+                placeholder="Title" 
+                name="title" 
+                id="title"
+                rows="1"
+                required
+            ></textarea>
+
+            <div class="editor-toolbar">
+                <button type="button" class="toolbar-btn" title="Bold">
+                    <strong>B</strong>
+                </button>
+                <button type="button" class="toolbar-btn" title="Italic">
+                    <em>I</em>
+                </button>
+                <button type="button" class="toolbar-btn" title="Underline">
+                    <u>U</u>
+                </button>
+                <button type="button" class="toolbar-btn" title="Add Link">
+                    "🔗"
+                </button>
+                <button type="button" class="toolbar-btn" title="Quote">
+                    "❝"
+                </button>
+                <button type="button" class="toolbar-btn" title="Bullet List">
+                    "• List"
+                </button>
+                <button type="button" class="toolbar-btn" title="Numbered List">
+                    "1. List"
+                </button>
+                <button type="button" class="toolbar-btn" title="Heading">
+                    "H1"
+                </button>
+            </div>
+
+            <textarea 
+                class="content-editor" 
+                placeholder="Start writing your story..."
+                name="content" 
+                id="content"
+                required
+            ></textarea>
+        </form>
+
+        <div class="editor-stats">
+            <div class="word-count">0 words</div>
+            <div class="read-time">1 min read</div>
+        </div>
+
+        <div class="writing-tips">
+            "💡 Tip: Write your first draft without editing"
+        </div>
 
 }}
 
