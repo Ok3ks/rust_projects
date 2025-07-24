@@ -2,7 +2,7 @@ use leptos::*;
 use leptos_meta::*;
 use chrono::{Utc};
 use leptos_router::*;
-
+stylance::import_crate_style!(my_style, "style/main.scss");
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -15,7 +15,7 @@ pub fn App() -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/leptos_start.css"/>
 
         // sets the document title
-        <Title text="Welcome to Leptos"/>
+        <Title text="Hi Emmanuel"/>
 
         // content for this welcome page
         <Router>
@@ -35,7 +35,7 @@ pub fn App() -> impl IntoView {
 #[component]
 fn JokesEmbed() -> impl IntoView {
 
-    let mut Jokes: Vec<String> = vec!["Why do programmers prefer dark mode? Because light attracts bugs!",
+    let Jokes: Vec<String> = vec!["Why do programmers prefer dark mode? Because light attracts bugs!",
     "I told my computer I needed a break, and now it won't stop sending me Kit-Kat ads.",
     "Why don't programmers like nature? It has too many bugs and no debugging tool.",
     "My software is like a teenage boy - it crashes at random times and never tells me why.",
@@ -100,13 +100,6 @@ fn HomePage() -> impl IntoView {
     </header>
     // Use random module to always generate one from the list, or link to a simple OPENAI call
     <JokesEmbed/>
-    // <section>
-    //     <div id ="about-me" >
-
-    //         <p>"As an individual, I am passionate about Sports, In my free time, I indulge in aerobic activities like Football."."Also speaking for everyone here when I say I love to travel and explore new grounds"</p>
-
-    //     </div>
-    // </section>
     <section>
     <div class="container">
         <h2 id="articles">"Articles"</h2>
@@ -279,20 +272,24 @@ fn DynamicTemplate() -> impl IntoView {
 #[component]
 fn Write() -> impl IntoView {
     view! {
-    <header class="writing-form" style="padding: 2rem 0;"></header>
-                <div class="action-bar">
-                <button type="button" class="btn-draft">Save Draft</button>
-                <button type="submit" class="btn-primary">Publish</button>
-            </div>
-    <form class="writing-form" action="#" method="post">
+        <header class="writing-form" style="padding: 2rem 0;"></header>
+        
+        <div class="action-bar">
+        <button type="button" class="btn-draft">Save Draft</button>
+        <button type="submit" class="btn-primary">Publish</button>
+        </div>
+        
+        // <div class="writing-container">
+        <form class="writing-form" action="#" method="post">
             <textarea 
                 class="title-input" 
                 placeholder="Title" 
                 name="title" 
                 id="title"
                 rows="1"
-                required
-            ></textarea>
+                required>
+            </textarea>
+            
 
             <div class="editor-toolbar">
                 <button type="button" class="toolbar-btn" title="Bold">
@@ -320,7 +317,6 @@ fn Write() -> impl IntoView {
                     "H1"
                 </button>
             </div>
-
             <textarea 
                 class="content-editor" 
                 placeholder="Start writing your story..."
@@ -329,6 +325,7 @@ fn Write() -> impl IntoView {
                 required
             ></textarea>
         </form>
+        // </div>
 
         <div class="editor-stats">
             <div class="word-count">0 words</div>
