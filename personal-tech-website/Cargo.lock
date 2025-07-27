@@ -1782,7 +1782,6 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "stylance",
- "uuid",
  "wasm-bindgen",
 ]
 
