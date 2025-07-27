@@ -2,7 +2,50 @@ use leptos::*;
 use leptos_meta::*;
 use chrono::{Utc};
 use leptos_router::*;
+use std::fs;
+use std::path::Path;
+use serde::{Deserialize, Serialize};
+use std::fmt;
+
 stylance::import_crate_style!(my_style, "style/main.scss");
+
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+struct Article<'a> {
+    id: i16,
+    title: &'a str,
+    text_content: &'a str,
+    is_draft: bool,
+    is_published: bool
+    //Add date
+}
+
+impl Article<'_> {
+    fn validate(&self) {
+        assert_eq!(self.is_draft, !self.is_published)
+    }
+
+    fn to_json(&self) -> String {
+        self.validate();
+        serde_json::to_string(self).unwrap()
+    }
+
+    pub fn save(&self) {
+        let binding = format!("{0}_{1}.txt", self.id, self.title).to_string();
+        let path = Path::new(&binding);
+        // P: AsRef<Path>
+        let file_path = path.to_path_buf();
+
+        if let Some(parent) = file_path.parent() {
+            fs::create_dir_all(parent).unwrap();
+        }
+        fs::write(path, self.to_json()).unwrap();
+    }
+
+    pub fn publish(&mut self) {
+        self.is_published = true;
+        self.save();
+    }
+}
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -18,14 +61,20 @@ pub fn App() -> impl IntoView {
         <Title text="Hi Emmanuel"/>
 
         // content for this welcome page
+        
         <Router>
             <main>
                 <Routes>
+                    //Main Routes
+                    <Route path="/write" view=Write/>
+                    <Route path="/editor/:id" view=Editor/>
+
+                    //Additional Templates
                     <Route path="" view=HomePage/>
                     <Route path="/template" view=Template/>
                     <Route path="/dynamic" view=DynamicTemplate/>
                     <Route path="/*any" view=NotFound/>
-                    <Route path="/write" view=Write/>
+                 
                 </Routes>
             </main>
         </Router>
@@ -270,16 +319,21 @@ fn DynamicTemplate() -> impl IntoView {
 }}
 
 #[component]
-fn Write() -> impl IntoView {
+fn Editor() -> impl IntoView {
+
+    // let params:Memo<ParamsMap> = use_params_map();
+    // let id = move || params.read().get("id").unwrap_or_default();
+
+    //articles.get(id)
+
     view! {
         <header class="writing-form" style="padding: 2rem 0;"></header>
-        
         <div class="action-bar">
-        <button type="button" class="btn-draft">Save Draft</button>
-        <button type="submit" class="btn-primary">Publish</button>
+            <button type="button" class="btn-draft">Save Draft</button>
+            <button type="submit" class="btn-primary">Publish</button>
         </div>
         
-        // <div class="writing-container">
+        <div class="writing-container">
         <form class="writing-form" action="#" method="post">
             <textarea 
                 class="title-input" 
@@ -325,7 +379,7 @@ fn Write() -> impl IntoView {
                 required
             ></textarea>
         </form>
-        // </div>
+        </div>
 
         <div class="editor-stats">
             <div class="word-count">0 words</div>
@@ -336,6 +390,37 @@ fn Write() -> impl IntoView {
             "💡 Tip: Write your first draft without editing"
         </div>
 
+}
+}
+
+#[component]
+fn Drafts() -> impl IntoView {
+    //Ingest drafts, used their title as the started of each line, with an edit button right beside.
+    //Sort by Tags? Timestamp
+    view! {
+        <header class="writing-form" style="padding: 2rem 0;"></header>
+        <ul class="drafts">
+            <li> 
+                <div class="flex-row">
+                    <p>"This is a new draft"</p>  
+                    <button type="button" class="btn-draft"> "Edit" </button>
+                </div>
+            </li>
+        </ul>
+}}
+
+#[component]
+fn Write() -> impl IntoView {
+    let navigate = leptos_router::use_navigate();
+    //obtains list of drafts, increment id and pass to editor
+    let id = 1;
+    
+    view! {
+        <header class="writing-form" style="padding: 2rem 0;"></header>
+        <div>
+            <Drafts/>
+            <button on:click= move |_|{ navigate(&format!("/editor/{id}"), Default::default())} > "New" </button> //redirect to Editor with id
+        </div>
 }}
 
 #[component]
@@ -534,7 +619,6 @@ fn NotFound() -> impl IntoView {
     // to the server
     #[cfg(feature = "ssr")]
     {
-        // this can be done inline because it's synchronous
         // if it were async, we'd use a server function
         let resp = expect_context::<leptos_actix::ResponseOptions>();
         resp.set_status(actix_web::http::StatusCode::NOT_FOUND);
