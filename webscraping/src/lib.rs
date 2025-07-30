@@ -30,13 +30,15 @@ impl Lyrics {
         serde_json::to_string(self).unwrap()
     }
 
-    pub fn save<P: AsRef<Path>>(&self, path: P) {
-        let file_path = path.as_ref().to_path_buf();
+    pub fn save(&self) {
+        let path = format!("lyrics/{0}/{1}", {&self.artist}, {&self.title });
+        let file_path = Path::new(&path);
 
         if let Some(parent) = file_path.parent() {
             fs::create_dir_all(parent).unwrap();
         }
-        fs::write(path, self.to_json()).unwrap();
+
+        fs::write(file_path, self.to_json()).unwrap();
     }
 }
 
