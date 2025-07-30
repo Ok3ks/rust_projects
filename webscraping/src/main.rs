@@ -1,7 +1,6 @@
-use clap::{builder::Str, Parser};
-use reqwest::header::AUTHORIZATION;
+use clap::Parser;
 use std::collections::*;
-use std::path::Path;
+use std::fs;
 use std::thread;
 use std::time::Duration;
 use webscraping::{Cli, Lyrics};
@@ -84,7 +83,7 @@ mod tests {
         let artist_url = String::from("https://www.musixmatch.com/artist/Kendrick-Lamar/albums");
         let albums = get_albums(artist_url);
 
-        for i in (albums) {
+        for i in albums {
             assert_eq!(i.starts_with("/album/"), true);
         }
     }
@@ -94,7 +93,7 @@ mod tests {
         let album_url = String::from("https://www.musixmatch.com/artist/Taylor-Swift/album/Taylor-Swift/Taylor-Swift-Big-Machine-Radio-Release-Special");
         let songs = get_songs(album_url);
 
-        for i in (songs) {
+        for i in songs {
             assert_eq!(i.starts_with("/lyrics/"), true);
         }
     }
@@ -114,11 +113,11 @@ mod tests {
 }
 
 pub fn _get_songs(album_url: String) -> HashSet<String> {
-    get_songs(album_url)
+    get_songs(&album_url)
 }
 
-fn get_songs(album_url: String) -> HashSet<String> {
-    let response = reqwest::blocking::get(&album_url);
+fn get_songs(album_url: &String) -> HashSet<String> {
+    let response = reqwest::blocking::get(album_url);
     let response = response.unwrap().text().unwrap();
     let document = scraper::Html::parse_document(&response);
 
@@ -139,11 +138,11 @@ fn get_songs(album_url: String) -> HashSet<String> {
 }
 
 pub fn _get_albums(url: String) -> HashSet<String> {
-    get_albums(url)
+    get_albums(&url)
 }
 
-fn get_albums(url: String) -> HashSet<String> {
-    let response = reqwest::blocking::get(&url);
+fn get_albums(url: &String) -> HashSet<String> {
+    let response = reqwest::blocking::get(url);
     let response = response.unwrap().text().unwrap();
     let document = scraper::Html::parse_document(&response);
 
@@ -160,6 +159,8 @@ fn get_albums(url: String) -> HashSet<String> {
         .into_iter()
         .filter(|x| x.starts_with("/album/"))
         .collect::<HashSet<_>>();
+
+
     _album_links
 }
 
@@ -177,19 +178,24 @@ fn get_artist_name() -> Vec<String> {
 }
 
 pub fn single_artist_scrap(artist: String) {
-    _single_artist_scrap(artist);
+    _single_artist_scrap(&artist);
 }
 
-fn _single_artist_scrap(artist: String) {
+fn _single_artist_scrap(artist: &String) {
     let _base_url = String::from("https://www.musixmatch.com/");
 
-    let albums = get_albums(artist);
+    let albums = get_albums(&artist);
     let mut count = 0;
 
     for element in albums {
-        for song in get_songs(_base_url.clone() + &element.clone().trim_start_matches('/')) {
-            let lyric = get_lyrics(_base_url.clone() + &song.clone().trim_start_matches('/'));
 
+        let path = _base_url.clone() + &element.clone().trim_start_matches('/');
+        let songs = get_songs(&path);
+        let _ = fs::write(format!("../lyrics/{0}/{1}", &artist, &element), songs.clone().into_iter().collect::<Vec<_>>().join(","));
+
+
+        for song in songs {
+            let lyric = get_lyrics(_base_url.clone() + &song.clone().trim_start_matches('/'));
             count += 1;
 
             lyric.save(Path::new(
