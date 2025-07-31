@@ -321,26 +321,40 @@ fn DynamicTemplate() -> impl IntoView {
 #[component]
 fn Editor() -> impl IntoView {
 
-    // let params:Memo<ParamsMap> = use_params_map();
-    // let id = move || params.read().get("id").unwrap_or_default();
+    let params:Memo<ParamsMap> = use_params_map();
+    let id = move || params.read().get("id").unwrap_or_default();
+    let current_article = Article{
+        id: id 
+    };
 
-    //articles.get(id)
+    let input_element: NodeRef<Input> = NodeRef::new();
+    //if in draft obtain content
+
+    let (title, set_title) = signal("Title".to_string());
+    let on_submit = move |ev: SubmitEvent| {
+        ev.prevent_default();
+        let value = input_element.get().expect("<input> to exist").value();
+        set_title.set(value);
+    };
 
     view! {
         <header class="writing-form" style="padding: 2rem 0;"></header>
         <div class="action-bar">
-            <button type="button" class="btn-draft">Save Draft</button>
+            <button type="submit" class="btn-draft">Save Draft</button>
             <button type="submit" class="btn-primary">Publish</button>
         </div>
         
         <div class="writing-container">
-        <form class="writing-form" action="#" method="post">
+
+        //escaping form input
+        <form class="writing-form" action="#" method="post" on:submit=on_submit>
             <textarea 
                 class="title-input" 
                 placeholder="Title" 
                 name="title" 
                 id="title"
                 rows="1"
+                node_ref=input_element
                 required>
             </textarea>
             
@@ -391,6 +405,11 @@ fn Editor() -> impl IntoView {
         </div>
 
 }
+
+    let query = use_query_map();
+    let title = query.read().get("title").unwrap_or_default();
+    let content = query.read().get("content").unwrap_or_default();
+
 }
 
 #[component]
