@@ -1,6 +1,8 @@
 use clap::Parser;
 use std::collections::*;
 use std::fs;
+use rand:: {Rng, thread_rng};
+use std::path::Path;
 use std::thread;
 use std::time::Duration;
 use webscraping::{Cli, Lyrics};
@@ -134,6 +136,19 @@ fn get_songs(album_url: &String) -> HashSet<String> {
         .into_iter()
         .filter(|x| x.starts_with("/lyrics/"))
         .collect::<HashSet<_>>();
+
+    //Logic to save list of songs in an album
+    let album_name = album_url.clone();
+    let mut album_name = album_name.split("/").collect::<Vec<_>>();
+    let album_path = format!("lyrics/{1}/album-{0}",  album_name.pop().unwrap(), album_name.pop().unwrap());
+    let album_path = Path::new(&album_path);
+
+    if let Some(parent) = album_path.parent() {
+        fs::create_dir_all(parent).unwrap();
+    }
+
+    let _ = fs::write(album_path, _song_links.clone().into_iter().collect::<Vec<_>>().join(",")).unwrap();
+
     _song_links
 }
 
@@ -183,6 +198,8 @@ pub fn single_artist_scrap(artist: String) {
 
 fn _single_artist_scrap(artist: &String) {
     let _base_url = String::from("https://www.musixmatch.com/");
+    let mut rng = thread_rng();
+
 
     let albums = get_albums(&artist);
     let mut count = 0;
@@ -191,44 +208,38 @@ fn _single_artist_scrap(artist: &String) {
 
         let path = _base_url.clone() + &element.clone().trim_start_matches('/');
         let songs = get_songs(&path);
-        let _ = fs::write(format!("../lyrics/{0}/{1}", &artist, &element), songs.clone().into_iter().collect::<Vec<_>>().join(","));
+        let random_seconds = rng.random_range(0..60);
 
 
         for song in songs {
             let lyric = get_lyrics(_base_url.clone() + &song.clone().trim_start_matches('/'));
             count += 1;
-
-            lyric.save(Path::new(
-                format!("../lyrics/{0}/{1}", { &lyric.artist }, { &lyric.title }).as_str(),
-            ));
-            break;
+            lyric.save();
+            thread::sleep(Duration::from_millis(random_seconds));
         }
         thread::sleep(Duration::from_millis(10000));
     }
 }
 
-pub fn spotify_search(url: &'static str, bearerToken: &'static str) -> String {
+// pub fn spotify_search(url: &'static str, bearerToken: &'static str) -> String {
 
-    let params = HashMap::from(
-        [
-            ("type", "playlist"), 
-            ("next", "5"),
-            ("limit", "15")
-        ]);
+//     let params = HashMap::from(
+//         [
+//             ("type", "playlist"), 
+//             ("next", "5"),
+//             ("limit", "15")
+//         ]);
 
-    /// Insert limits and next in order to track multipage responses
+//     let response = reqwest::blocking::Client::new().get(url).header(AUTHORIZATION, bearerToken).send();
+//     let response = response.unwrap().text().unwrap();
+//     response
 
-    let response = reqwest::blocking::Client::new().get(url).header(AUTHORIZATION, bearerToken).send();
-    println!(response);
-    let response = response.unwrap().text().unwrap();
-    response
-
-}
+// }
 
 fn main() {
 
     let _album_url = get_artist_name();
-    _album_url.into_par_iter().for_each(|x| _single_artist_scrap(x.to_string()));
+    _album_url.into_par_iter().for_each(|x| _single_artist_scrap(&x.to_string()));
 
 }
 
@@ -250,10 +261,10 @@ fn main() {
 
 //unwrap_or_else, match , if let
 
-
 //connect API to spotify lyrics, search button. to sift music
 
 // Breadth first search with playlists perhaps to find similar songs? or use theme? 
+
 // Data quality issue perhaps, find a way to classify song themes
 
 // Insert Analytics into app builds
