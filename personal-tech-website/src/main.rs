@@ -5,8 +5,8 @@ use leptos::prelude::*;
 async fn main() -> std::io::Result<()> {
     use actix_files::Files;
     use actix_web::*;
-    use leptos::*;
     use leptos::prelude::*;
+    use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
     use personal_tech_website::app::*;
 
